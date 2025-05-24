@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  bot:
+    build: .
+    restart: always
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - BOT_USERNAME=${BOT_USERNAME}
+      - DB_URL=jdbc:postgresql://db:5432/${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      - db
+    networks:
+      - bot-network
+
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: telegram_bot_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - bot-network
+
+volumes:
+  pgdata:
+
+networks:
+  bot-network:
